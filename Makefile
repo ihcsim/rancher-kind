@@ -35,11 +35,20 @@ rancher:
 	--namespace cattle-system \
 	--set hostname=$(CLUSTER_HOST_IP).sslip.io \
 	--set rancherImageTag=$(VERSION_RANCHER) \
-	--set replicas=1 \
+	--set replicas=1
 	for deploy in rancher rancher-webhook; do \
-		kubectl -n cattle-system wait --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
+		kubectl -n cattle-system wait --timeout=180s --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
 		kubectl -n cattle-system rollout status deploy/$${deploy} ;\
 	done
+
+rancher-url:
+	@echo https://192.168.1.73.sslip.io/dashboard/?setup=$(shell kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}')
+
+rancher-password:
+	@kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
+
+rancher-reset-password:
+	kubectl -n cattle-system exec -it deploy/rancher -- reset-password
 
 purge:
 	kind delete cluster --name $(CLUSTER_NAME)
