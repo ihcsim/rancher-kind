@@ -40,3 +40,6 @@ rancher:
 		kubectl -n cattle-system wait --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
 		kubectl -n cattle-system rollout status deploy/$${deploy} ;\
 	done
+
+purge:
+	kind delete cluster --name $(CLUSTER_NAME)
