@@ -42,7 +42,7 @@ rancher:
 	done
 
 rancher-url:
-	@echo https://192.168.1.73.sslip.io/dashboard/?setup=$(shell kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}')
+	@echo https://$(CLUSTER_HOST_IP).sslip.io/dashboard/?setup=$(shell kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}')
 
 rancher-password:
 	@kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
