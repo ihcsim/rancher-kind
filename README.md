@@ -5,9 +5,9 @@ This project provides a Makefile to deploy Rancher on KinD.
 Prerequisites:
 
 * Download and install these software:
-  * kubectl
-  * Helm
-  * KinD (and Docker)
+  * [kubectl](https://kubernetes.io/docs/tasks/tools/)
+  * [Helm](https:///helm.sh)
+  * [KinD](https://kind.sigs.k8s.io/) (and Docker)
 
 The KinD cluster is configured with host port mappings to allow HTTP/HTTPS access
 from the host to the in-cluster Rancher UI.
