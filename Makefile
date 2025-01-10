@@ -21,9 +21,9 @@ ingress:
 cert-manager:
 	kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/$(VERSION_CERT_MANAGER)/cert-manager.crds.yaml
 	helm install cert-manager jetstack/cert-manager \
-  --create-namespace \
-  --namespace cert-manager \
-  --set image.tag=$(VERSION_CERT_MANAGER)
+	--create-namespace \
+	--namespace cert-manager \
+	--set image.tag=$(VERSION_CERT_MANAGER)
 	for deploy in cert-manager cert-manager-webhook cert-manager-cainjector; do \
 		kubectl -n cert-manager wait --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
 		kubectl -n cert-manager rollout status deploy/$${deploy} ;\
@@ -31,12 +31,12 @@ cert-manager:
 
 rancher:
 	helm install rancher rancher-latest/rancher \
-  --create-namespace \
-  --namespace cattle-system \
-  --set hostname=$(CLUSTER_HOST_IP).sslip.io \
-  --set rancherImageTag=$(VERSION_RANCHER) \
-  --set replicas=1 \
-  for deploy in rancher rancher-webhook; do \
-    kubectl -n cattle-system wait --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
-    kubectl -n cattle-system rollout status deploy/$${deploy} ;\
-  done
+	--create-namespace \
+	--namespace cattle-system \
+	--set hostname=$(CLUSTER_HOST_IP).sslip.io \
+	--set rancherImageTag=$(VERSION_RANCHER) \
+	--set replicas=1 \
+	for deploy in rancher rancher-webhook; do \
+		kubectl -n cattle-system wait --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
+		kubectl -n cattle-system rollout status deploy/$${deploy} ;\
+	done
