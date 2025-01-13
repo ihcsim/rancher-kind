@@ -37,7 +37,7 @@ rancher:
 	--set rancherImageTag=$(VERSION_RANCHER) \
 	--set replicas=1
 	for deploy in rancher rancher-webhook; do \
-		kubectl -n cattle-system wait --timeout=180s --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
+		kubectl -n cattle-system wait --timeout=600s --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
 		kubectl -n cattle-system rollout status deploy/$${deploy} ;\
 	done
 
