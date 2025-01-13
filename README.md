@@ -2,12 +2,24 @@
 
 This project provides a Makefile to deploy Rancher on KinD.
 
-Prerequisites:
+## Prerequisites
 
-* Download and install these software:
+Download and install these software:
   * [kubectl](https://kubernetes.io/docs/tasks/tools/)
   * [Helm](https:///helm.sh)
   * [KinD](https://kind.sigs.k8s.io/) (and Docker)
+
+Set up a 3-node Harvester cluster following the instructions
+[here](https://docs.harvesterhci.io/v1.4/install/index)
+
+For development purposes, the following node specification should suffice:
+
+Node Role | Node Count | vCPU | RAM  | Disk
+----------|------------|------|------|------
+management| 1          | 4    | 16GB | 250GB
+worker    | 3          | 4    | 16GB | 250GB
+
+### KinD Cluster Configuration
 
 The KinD cluster is configured with host port mappings to allow HTTP/HTTPS access
 from the host to the in-cluster Rancher UI.
@@ -97,13 +109,14 @@ Pool Name | Node Count              | vCPU | RAM | Disk
 ----------|-------------------------|------|-----|-----
 pool1     | 2 control plane, 2 etcd | 2    | 4GB | 10GB
 pool2     | 1 worker                | 2    | 4GB | 10GB
-pool3     | 1 etcd                  | 2    | 4GB | 10GB
+pool3     | 1 etcd                  | 1    | 4GB | 10GB
 
 - Create RKE2 cluster:
 - Select guest cluster namespace
 - Use untagged VLAN network
 
-Disable Nginx ingress controller and metrics server
+On resource constrained environment, disable Nginx ingress controller and metrics
+server.
 
 Add `iptables` to list of packages to be installed in the cloud-config:
 ```
