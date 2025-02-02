@@ -45,7 +45,7 @@ rancher:
 	--set hostname=$(shell cat $(HOME)/.rancher-kind/cluster.yaml | yq .hostname) \
 	--set rancherImageTag=$(VERSION_RANCHER) \
 	--set replicas=1
-	for deploy in rancher rancher-webhook; do \
+	for deploy in rancher; do \
 		kubectl -n cattle-system wait --timeout=1200s --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
 		kubectl -n cattle-system rollout status deploy/$${deploy} ;\
 	done
