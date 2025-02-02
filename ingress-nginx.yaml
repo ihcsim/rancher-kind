@@ -506,7 +506,7 @@ spec:
       dnsPolicy: ClusterFirst
       nodeSelector:
         kubernetes.io/os: linux
-        kubernetes.io/hostname: isim-dev-control-plane
+        node-role.kubernetes.io/control-plane: ""
       serviceAccountName: ingress-nginx
       terminationGracePeriodSeconds: 0
       tolerations:
