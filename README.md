@@ -33,9 +33,7 @@ https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade
 
 To create a new KinD cluster:
 ```sh
-make cluster \
-  CLUSTER_NAME=<cluster-name> \
-  CLUSTER_HOST_IP=<cluster-host-ip>
+make cluster CLUSTER_NAME=<cluster-name>
 ```
 
 To set up Helm repo:
@@ -50,7 +48,7 @@ make ingress cert-manager
 
 Install Rancher:
 ```sh
-make rancher
+make rancher CLUSTER_HOST_IP=<cluster-host-ip>
 ```
 
 To get the Rancher UI URL and login password:
