@@ -5,6 +5,7 @@ VERSION_RANCHER ?= v2.10.2
 CLUSTER_NAME ?=
 CLUSTER_PRIVATE_IP ?= 192.168.1.73
 CLUSTER_HOSTNAME ?=
+CLUSTER_REPLICAS ?= 3
 
 repos:
 	helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
@@ -33,26 +34,28 @@ cert-manager:
 		kubectl -n cert-manager rollout status deploy/$${deploy} ;\
 	done
 
-rancher:
-	if [ ! -z $(CLUSTER_HOSTNAME) ]; then \
-		echo "hostname: $(CLUSTER_HOSTNAME)" >> $(HOME)/.rancher-kind/cluster.yaml ;\
-	elif [ ! -z $(CLUSTER_PRIVATE_IP) ]; then \
-		echo "hostname: $(CLUSTER_PRIVATE_IP).sslip.io" >> $(HOME)/.rancher-kind/cluster.yaml ;\
-	fi;\
+rancher: update-rancher-hostname
 	helm install rancher rancher-latest/rancher \
 	--create-namespace \
 	--namespace cattle-system \
 	--set hostname=$(shell cat $(HOME)/.rancher-kind/cluster.yaml | yq .hostname) \
 	--set rancherImageTag=$(VERSION_RANCHER) \
-	--set replicas=1
+	--set replicas=$(CLUSTER_REPLICAS) ;\
 	for deploy in rancher; do \
 		kubectl -n cattle-system wait --timeout=1200s --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
 		kubectl -n cattle-system rollout status deploy/$${deploy} ;\
 	done
 
+update-rancher-hostname:
+	if [ ! -z $(CLUSTER_HOSTNAME) ]; then \
+		echo "hostname: $(CLUSTER_HOSTNAME)" >> $(HOME)/.rancher-kind/cluster.yaml ;\
+	elif [ ! -z $(CLUSTER_PRIVATE_IP) ]; then \
+		echo "hostname: $(CLUSTER_PRIVATE_IP).sslip.io" >> $(HOME)/.rancher-kind/cluster.yaml ;\
+	fi
+
 rancher-url:
 	@hostname=$(shell cat $(HOME)/.rancher-kind/cluster.yaml | yq .hostname) ;\
-	echo https://$$(hostname)/dashboard/?setup=$(shell kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}')
+	echo https://$${hostname}/dashboard/?setup=$(shell kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}')
 
 rancher-password:
 	@kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
