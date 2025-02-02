@@ -40,7 +40,7 @@ make cluster \
 
 To set up Helm repo:
 ```sh
-make repo
+make repos
 ```
 
 Install the dependencies: Nginx Ingress Controller, cert-manager:
@@ -93,7 +93,7 @@ have the following properties:
 An SSH public key can be injected into the guest cluster nodes by adding them to
 the 'SSH Keys' section under the 'Advanced' page.
 
-Retrieve the Rancher CA certifcate:
+From the Rancher cluster, retrieve the Rancher CA certifcate:
 ```sh
 kubectl -n cattle-system get secret tls-rancher-ingress -ojsonpath='{.data.ca\.crt}' | base64 -d -
 ```
@@ -102,6 +102,8 @@ Add this certificate to Harvester's trust chain via the 'additional-ca' settings
 on the 'Settings' page.
 
 ## Deploy RKE2 Guest Cluster On Harvester
+
+On the Rancher UI, navigate to the 'Cluster Management' page.
 
 Guest cluster nodes specification:
 
