@@ -8,6 +8,7 @@ Download and install these software:
   * [kubectl](https://kubernetes.io/docs/tasks/tools/)
   * [Helm](https:///helm.sh)
   * [KinD](https://kind.sigs.k8s.io/) (and Docker)
+  * [yq](https://github.com/mikefarah/yq)
 
 Set up a 3-node Harvester cluster following the instructions
 [here](https://docs.harvesterhci.io/v1.4/install/index)
@@ -36,6 +37,8 @@ To create a new KinD cluster:
 make cluster CLUSTER_NAME=<cluster-name>
 ```
 
+The cluster details are persisted at `~/.rancher-kind/cluster.yaml`.
+
 To set up Helm repo:
 ```sh
 make repos
@@ -46,10 +49,23 @@ Install the dependencies: Nginx Ingress Controller, cert-manager:
 make ingress cert-manager
 ```
 
-Install Rancher:
+If the host has a public DNS hostname, install Rancher with:
 ```sh
-make rancher CLUSTER_HOST_IP=<cluster-host-ip>
+make rancher CLUSTER_HOSTNAME=<public-hostname>
 ```
+
+E.g., an EC2 instance residing in a public subnet has a public DNS hostname that
+looks like `ec2-xxx-xxx-xxx-xxx.<region>.compute.amazonaws.com`.
+
+For local development where the Rancher KinD cluster and Harvester resides in the
+same private subnet, install Rancher with:
+```sh
+make rancher CLUSTER_PRIVATE_IP=<cluster-private-ip>
+```
+
+This sets Rancher's public hostname to be `<cluster-private-ip>.sslip.io`.
+
+The Harvester cluster must be able to connect to the provideded private IP.
 
 To get the Rancher UI URL and login password:
 ```sh

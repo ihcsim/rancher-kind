@@ -1,9 +1,10 @@
 SHELL := /bin/bash
 
 VERSION_CERT_MANAGER ?= v1.16.2
-VERSION_RANCHER ?= v2.9.3
-CLUSTER_NAME ?= isim-dev
-CLUSTER_HOST_IP ?= 192.168.1.73
+VERSION_RANCHER ?= v2.10.2
+CLUSTER_NAME ?=
+CLUSTER_PRIVATE_IP ?= 192.168.1.73
+CLUSTER_HOSTNAME ?=
 
 repos:
 	helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
@@ -12,6 +13,9 @@ repos:
 
 cluster:
 	kind create cluster --name $(CLUSTER_NAME) --config ./kind.yaml
+	rm -f $(HOME)/.rancher-kind
+	mkdir -p $(HOME)/.rancher-kind
+	echo "name: $(CLUSTER_NAME)" >> $(HOME)/.rancher-kind/cluster.yaml
 
 ingress:
 	kubectl apply -f ./ingress-nginx.yaml
@@ -30,19 +34,25 @@ cert-manager:
 	done
 
 rancher:
+	if [ ! -z $(CLUSTER_HOSTNAME) ]; then \
+		echo "hostname: $(CLUSTER_HOSTNAME)" >> $(HOME)/.rancher-kind/cluster.yaml ;\
+	elif [ ! -z $(CLUSTER_PRIVATE_IP) ]; then \
+		echo "hostname: $(CLUSTER_PRIVATE_IP).sslip.io" >> $(HOME)/.rancher-kind/cluster.yaml ;\
+	fi;\
 	helm install rancher rancher-latest/rancher \
 	--create-namespace \
 	--namespace cattle-system \
-	--set hostname=$(CLUSTER_HOST_IP).sslip.io \
+	--set hostname=$(shell cat $(HOME)/.rancher-kind/cluster.yaml | yq .hostname) \
 	--set rancherImageTag=$(VERSION_RANCHER) \
 	--set replicas=1
 	for deploy in rancher rancher-webhook; do \
-		kubectl -n cattle-system wait --timeout=600s --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
+		kubectl -n cattle-system wait --timeout=1200s --for=jsonpath='{.status.conditions[?(@.type=="Available")].status}=True' deploy/$${deploy}; \
 		kubectl -n cattle-system rollout status deploy/$${deploy} ;\
 	done
 
 rancher-url:
-	@echo https://$(CLUSTER_HOST_IP).sslip.io/dashboard/?setup=$(shell kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}')
+	@hostname=$(shell cat $(HOME)/.rancher-kind/cluster.yaml | yq .hostname) ;\
+	echo https://$$(hostname)/dashboard/?setup=$(shell kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}')
 
 rancher-password:
 	@kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
