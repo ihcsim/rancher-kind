@@ -61,4 +61,5 @@ rancher-reset-password:
 	kubectl -n cattle-system exec -it deploy/rancher -- reset-password
 
 purge:
-	kind delete cluster --name $(CLUSTER_NAME)
+	kind delete cluster --name $(shell cat $(HOME)/.rancher-kind/cluster.yaml | yq .name)
+	rm -rf $(HOME)/.rancher-kind
