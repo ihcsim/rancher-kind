@@ -9,6 +9,7 @@ CLUSTER_REPLICAS ?= 3
 
 repos:
 	helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+	helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
 	helm repo add jetstack https://charts.jetstack.io
 	helm repo update
 
@@ -37,6 +38,7 @@ cert-manager:
 rancher: update-rancher-hostname
 	helm install rancher rancher-latest/rancher \
 	--create-namespace \
+        --version=$(VERSION_RANCHER) \
 	--namespace cattle-system \
 	--set hostname=$(shell cat $(HOME)/.rancher-kind/cluster.yaml | yq .hostname) \
 	--set rancherImageTag=$(VERSION_RANCHER) \
