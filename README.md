@@ -57,7 +57,7 @@ make rancher CLUSTER_HOSTNAME=<public-hostname>
 E.g., an EC2 instance residing in a public subnet has a public DNS hostname that
 looks like `ec2-xxx-xxx-xxx-xxx.<region>.compute.amazonaws.com`.
 
-For local development where the Rancher KinD cluster and Harvester resides in the
+For local development where the Rancher KinD cluster and Harvester reside on the
 same private subnet, install Rancher with:
 ```sh
 make rancher CLUSTER_PRIVATE_IP=<cluster-private-ip>
