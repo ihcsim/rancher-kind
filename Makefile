@@ -14,7 +14,7 @@ repos:
 
 cluster:
 	kind create cluster --name $(CLUSTER_NAME) --config ./kind.yaml
-	rm -f $(HOME)/.rancher-kind
+	rm -rf $(HOME)/.rancher-kind
 	mkdir -p $(HOME)/.rancher-kind
 	echo "name: $(CLUSTER_NAME)" >> $(HOME)/.rancher-kind/cluster.yaml
 
