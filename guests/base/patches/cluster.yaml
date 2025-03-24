@@ -1,0 +1,21 @@
+apiVersion: provisioning.cattle.io/v1
+kind: Cluster
+metadata:
+  name: "guest-rke2"
+  namespace: fleet-default
+spec:
+  rkeConfig:
+    chartValues:
+      harvester-cloud-provider:
+        cloudConfigPath: /var/lib/rancher/rke2/etc/config-files/cloud-provider-config
+        global:
+          cattle:
+            clusterName: "guest-rke2"
+      rke2-calico: {}
+    machineGlobalConfig:
+      cni: calico
+    machineSelectorConfig:
+    - config:
+        cloud-provider-config: secret://fleet-default:harvesterconfig-guest-rke2
+        cloud-provider-name: harvester
+        protect-kernel-defaults: false

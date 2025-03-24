@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: fleet-default
+resources:
+- cluster.yaml
+patches:
+- path: patches/nodepool.yaml
+  target:
+    group: rke-machine-config.cattle.io
+    version: v1
+    kind: HarvesterConfig
+    name: harvester-nodepool-1
+- path: patches/cluster.yaml
+  target:
+    group: provisioning.cattle.io
+    version: v1
+    kind: Cluster
+    name: guest-rke2
+secretGenerator:
+- name: harvesterconfig-guest-rke2
+  type: secret
+  files: 
+  - credential=secrets/kubeconfig.yaml
+  options:
+    annotations:
+      v2prov-authorized-secret-deletes-on-cluster-removal: "true"
+      v2prov-secret-authorized-for-cluster: guest-rke2
+generatorOptions:
+ disableNameSuffixHash: true

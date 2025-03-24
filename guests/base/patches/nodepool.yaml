@@ -1,0 +1,17 @@
+apiVersion: rke-machine-config.cattle.io/v1
+kind: HarvesterConfig
+metadata:
+  name: harvester-nodepool-1
+  namespace: fleet-default
+cpuCount: "2"
+diskInfo: '{"disks":[{"imageName":"guest-rke2/image-b6sj8","bootOrder":1,"size":40}]}'
+enableEfi: false
+enableSecureBoot: false
+imageName: ""
+memorySize: "4"
+networkInfo: '{"interfaces":[{"networkName":"guest-rke2/untagged-default","macAddress":""}]}'
+networkName: ""
+sshPort: "22"
+sshUser: ubuntu
+userData: I2Nsb3VkLWNvbmZpZwpwYWNrYWdlX3VwZGF0ZTogdHJ1ZQpwYWNrYWdlczoKICAtIHFlbXUtZ3Vlc3QtYWdlbnQKcnVuY21kOgogIC0gLSBzeXN0ZW1jdGwKICAgIC0gZW5hYmxlCiAgICAtICctLW5vdycKICAgIC0gcWVtdS1ndWVzdC1hZ2VudC5zZXJ2aWNlCg==
+vmNamespace: "guest-rke2"
