@@ -57,15 +57,21 @@ make rancher CLUSTER_HOSTNAME=<public-hostname>
 E.g., an EC2 instance residing in a public subnet has a public DNS hostname that
 looks like `ec2-xxx-xxx-xxx-xxx.<region>.compute.amazonaws.com`.
 
+---
 For local development where the Rancher KinD cluster and Harvester reside on the
 same private subnet, install Rancher with:
 ```sh
 make rancher CLUSTER_PRIVATE_IP=<cluster-private-ip>
 ```
 
-This sets Rancher's public hostname to be `<cluster-private-ip>.sslip.io`.
+This sets Rancher's public hostname to be `<cluster-private-ip>.sslip.io`. The
+Harvester cluster must be able to connect to the provided private IP.
 
-The Harvester cluster must be able to connect to the provideded private IP.
+The KinD cloud provider must be installed following the instructions at
+[here](https://kind.sigs.k8s.io/docs/user/loadbalancer/). The Rancher's service
+type must also be set to `LoadBalancer`.
+
+---
 
 To get the Rancher UI URL and login password:
 ```sh

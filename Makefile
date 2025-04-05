@@ -38,7 +38,7 @@ cert-manager:
 rancher: update-rancher-hostname
 	helm install rancher rancher-latest/rancher \
 	--create-namespace \
-        --version=$(VERSION_RANCHER) \
+	--version=$(VERSION_RANCHER) \
 	--namespace cattle-system \
 	--set hostname=$(shell cat $(HOME)/.rancher-kind/cluster.yaml | yq .hostname) \
 	--set rancherImageTag=$(VERSION_RANCHER) \
